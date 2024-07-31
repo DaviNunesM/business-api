@@ -7,13 +7,14 @@ use Illuminate\Support\Facades\Http;
 
 class CompanyRepository
 {
+    private $httpClient;
     public function __construct()
     {
-        //
+        $this->httpClient = Http::baseUrl(config('services.brasil-api.url'));
     }
 
     public function get(string $cnpj): Response
     {
-        return Http::get("https://brasilapi.com.br/api/cnpj/v1/{$cnpj}");
+        return $this->httpClient->get("/cnpj/v1/{$cnpj}");
     }   
 }

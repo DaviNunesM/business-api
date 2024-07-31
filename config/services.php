@@ -14,6 +14,9 @@ return [
     |
     */
 
+    'brasil-api' => [
+        'url' => env('BRASIL_API_URL'),
+    ],
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
