@@ -23,10 +23,46 @@ class CompanyService
         }
 
         $response = $this->repository->get($cnpj);
+
         if ($response->failed()) {
             throw new NotFoundHttpException('CNPJ não encontrado');
         }
 
-        return $response->json();
+        $data = collect($response->json())->recursive();
+
+        $partners = $data->get('qsa')->map(function ($val) {
+            return [
+                'name' => $val->get('nome_socio'),
+                'cpf' => $val->get('cnpj_cpf_do_socio'),
+            ];
+        })->all();
+    
+        $secundary_activities = $data->get('cnaes_secundarios')->map(function ($val) {
+            return [
+                'code' => $val->get('codigo'),
+                'description' => $val->get('descricao'),
+            ];
+        })->all();
+    
+        return [
+            'name' => $data->get('razao_social'),
+            'main_activity' => $data->get('cnae_fiscal'),
+            'main_activity_description' => $data->get('cnae_fiscal_descricao'),
+            'activity_start_date' => $data->get('data_inicio_atividade'),
+            'registration_status_date' => $data->get('data_situacao_cadastral'),
+            'address' => [
+                'street_name' => $data->get('logradouro'),
+                'number' => $data->get('numero'),
+                'complement' => $data->get('complemento'),
+                'postal_code' => $data->get('cep'),
+                'neighborhood' => $data->get('bairro'),
+                'city' => $data->get('municipio'),
+                'state' => $data->get('uf'),
+            ],
+            'phone_number' => $data->get('ddd_telefone_1'),
+            'share_capital' => $data->get('capital_social'),
+            'partners' => $partners,
+            'secundary_activities' => $secundary_activities,
+        ];
     }
 }
