@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  laravel:
+    restart: unless-stopped
+    container_name: laravelapp
+    build:
+      dockerfile: Dockerfile
+    volumes:
+      - ../storage/app:/var/www/html/storage/app
+    environment:
+      BRASIL_API_URL: ${BRASIL_API_URL}
+    ports:
+      - "8080:80"
+    networks:
+      - n-laravel
+
+networks:
+  n-laravel:
+    driver: bridge
