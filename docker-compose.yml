@@ -7,7 +7,9 @@ services:
     build:
       dockerfile: Dockerfile
     volumes:
-      - ../storage/app:/var/www/html/storage/app
+      - .:/var/www/html
+      - ./vendor:/var/www/html/vendor
+      - ./storage:/var/www/html/storage
     environment:
       BRASIL_API_URL: ${BRASIL_API_URL}
     ports:
